@@ -3,7 +3,7 @@
  * Lógica de interacción, búsqueda en vivo, filtros, ensalada personalizada y selección de mesa
  */
 
-import { MENU_DATA, SALAD_BAR_CONFIG, DIETARY_TAGS, ALLERGEN_NOTICE } from './data/menu-data.js';
+import { MENU_DATA, SALAD_BAR_CONFIG, DIETARY_TAGS, ALLERGEN_NOTICE } from '../data/menu-data.js';
 
 // Estado global de la aplicación
 const AppState = {
