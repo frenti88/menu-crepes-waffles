@@ -1425,6 +1425,12 @@ const openItemDetail = (itemId) => {
     closeDialog('item-detail-modal');
   });
 
+  // Botón ✕ — cerrar detalle
+  const btnCloseDetail = document.getElementById('btn-close-detail');
+  if (btnCloseDetail) {
+    btnCloseDetail.onclick = () => closeDialog('item-detail-modal');
+  }
+
   openDialog('item-detail-modal');
 };
 
