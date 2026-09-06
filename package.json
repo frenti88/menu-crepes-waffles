@@ -5,6 +5,7 @@
   "description": "Menú digital mobile de Crepes & Waffles optimizado para accesibilidad y usabilidad móvil.",
   "type": "module",
   "scripts": {
+    "build": "mkdir -p dist && cp -r index.html styles.css app.js data dist/",
     "start": "node server.js"
   },
   "keywords": [

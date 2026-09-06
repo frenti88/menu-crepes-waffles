@@ -1,4 +1,4 @@
 {
-  "name": "menu-crepes-waffles",
-  "cleanUrls": true
+  "cleanUrls": true,
+  "outputDirectory": "dist"
 }
