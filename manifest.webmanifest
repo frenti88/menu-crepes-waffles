@@ -1,0 +1,26 @@
+{
+  "name": "Crepes & Waffles · Menú Digital",
+  "short_name": "C&W Menú",
+  "description": "Menú digital oficial de Crepes & Waffles optimizado para dispositivos móviles.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FAF6F0",
+  "theme_color": "#241610",
+  "categories": ["food", "lifestyle"],
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='40' fill='%23241610'/><text x='50%25' y='55%25' font-size='96' text-anchor='middle' dominant-baseline='middle'>🥞</text></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='100' fill='%23241610'/><text x='50%25' y='55%25' font-size='256' text-anchor='middle' dominant-baseline='middle'>🥞</text></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

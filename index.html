@@ -5,6 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#221610">
   <meta name="description" content="Menú digital oficial de Crepes & Waffles optimizado para dispositivos móviles. Consulta desayunos, crepes de sal y dulce, waffles, ensaladas, helados artesanales y más.">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Crepes & Waffles">
+  <link rel="manifest" href="manifest.webmanifest">
+
   <title>Crepes & Waffles · Menú Digital</title>
 
   <!-- Google Fonts preconnect & stylesheet -->
@@ -20,6 +26,12 @@
 
   <!-- Header Superior Fijo -->
   <header class="site-header" id="site-header" role="banner">
+    <!-- Barra de Estado Offline (/harden) -->
+    <div class="offline-status-bar" id="offline-status-bar" role="status" aria-live="polite" hidden>
+      <span class="offline-icon" aria-hidden="true">📶</span>
+      <span>Modo sin conexión · Menú y comanda guardados en tu dispositivo</span>
+    </div>
+
     <div class="header-main-bar">
       <div class="brand-container">
         <a href="#" class="brand-logo" aria-label="Crepes and Waffles Inicio">
@@ -29,7 +41,7 @@
       </div>
 
       <div class="header-actions">
-        <button id="btn-toggle-search" class="icon-button" aria-label="Abrir buscador del menú" aria-expanded="false" aria-controls="search-drawer">
+        <button id="btn-toggle-search" class="icon-button" aria-label="Abrir buscador del menú" aria-expanded="false" aria-controls="search-modal">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <circle cx="11" cy="11" r="8"></circle>
             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
@@ -79,13 +91,16 @@
     </section>
   </header>
 
-  <!-- Barra informativa de masa y alérgenos -->
-  <aside class="top-info-banner" aria-label="Avisos importantes">
-    <div class="info-content">
-      <span class="info-icon" aria-hidden="true">✨</span>
-      <p class="info-text">Ahora puedes pedir tus crepes en <strong>masa vegana y sin gluten</strong>.</p>
+  <!-- Hero Editorial Destilado (/distill) -->
+  <section class="brand-hero-section" aria-label="Bienvenida a Crepes & Waffles">
+    <div class="hero-inner">
+      <span class="hero-greeting-pill" id="hero-time-greeting">
+        <span class="greeting-icon">✨</span>
+        <span class="greeting-text">Bienvenidos a Crepes & Waffles</span>
+      </span>
+      <h2 class="hero-slogan-title">Amor hecho alimento · Arte-Sano</h2>
     </div>
-  </aside>
+  </section>
 
   <!-- Contenido Principal del Menú -->
   <main class="main-content" id="main-menu-content">
@@ -128,13 +143,13 @@
   <!-- Barra Flotante Inferior de "Para Pedir al Mesero" -->
   <div class="floating-cart-bar" id="floating-cart-bar" role="complementary" aria-label="Platos seleccionados para ordenar">
     <button class="floating-cart-btn" id="btn-floating-cart" aria-haspopup="dialog">
-      <div class="cart-info">
-        <span class="cart-count-pill" id="float-cart-count">0 platos</span>
+      <div class="cart-info" aria-live="polite" aria-atomic="true">
+        <span class="cart-count-pill" id="float-cart-count">0</span>
         <span class="cart-title-text">Para pedir al mesero</span>
       </div>
       <div class="cart-total-action">
         <span class="cart-total-amount" id="float-cart-total">$0</span>
-        <span class="cart-arrow" aria-hidden="true">Ver lista →</span>
+        <span class="cart-arrow" aria-hidden="true">Ver orden →</span>
       </div>
     </button>
   </div>
@@ -167,75 +182,131 @@
     </div>
   </dialog>
 
-  <!-- MODAL / BOTTOM SHEET: Para Ordenar al Mesero -->
+  <!-- MODAL / BOTTOM SHEET: Para Ordenar al Mesero (Unificado: Lista + Dictado) -->
   <dialog id="cart-modal" class="app-dialog bottom-sheet-dialog" aria-labelledby="cart-modal-title">
     <div class="dialog-content">
       <div class="sheet-drag-handle" aria-hidden="true"></div>
       
       <div class="dialog-header">
         <div class="header-titles">
-          <h2 id="cart-modal-title" class="dialog-title">📋 Para Ordenar al Mesero</h2>
-          <p class="dialog-subtitle">Díctale o muéstrale esta lista a tu mesero cuando tome tu orden</p>
+          <h2 id="cart-modal-title" class="dialog-title">📋 Selección para el Mesero</h2>
         </div>
-        <button type="button" class="btn-close-dialog" id="btn-close-cart" aria-label="Cerrar lista">✕</button>
+        <div class="dialog-header-right">
+          <button type="button" class="btn-toggle-salon" id="btn-toggle-salon-mode" aria-label="Alternar modo salón con luz tenue" title="Modo Salón / Luz Tenue" hidden>🌙 Salón</button>
+          <button type="button" class="btn-close-dialog" id="btn-close-cart" aria-label="Cerrar lista">✕</button>
+        </div>
       </div>
 
-      <div class="cart-items-container" id="cart-items-container" role="region" aria-label="Platos seleccionados">
-        <!-- Inyectado por JS -->
+      <!-- Selector de Vista Destilado (Lista vs Dictado) -->
+      <div class="comanda-view-segmented" role="tablist" aria-label="Modo de visualización de la comanda">
+        <button type="button" role="tab" id="tab-view-list" class="view-segment-btn active" aria-selected="true">
+          <span>📝 Lista & Edición</span>
+        </button>
+        <button type="button" role="tab" id="tab-view-dictate" class="view-segment-btn" aria-selected="false">
+          <span>🎙️ Modo Dictado</span>
+        </button>
       </div>
 
-      <div class="cart-calculation-panel" id="cart-calculation-panel">
-        <div class="calc-row total-row">
-          <span>Total de tu selección:</span>
-          <strong id="calc-total">$0</strong>
+      <!-- Barra de Identificador de Mesa -->
+      <div class="table-identifier-bar">
+        <label for="input-table-number" class="table-label">📍 Mesa / Lugar:</label>
+        <input type="text" id="input-table-number" class="table-input" placeholder="Ej: Mesa 14, Terraza..." maxlength="25" />
+      </div>
+
+      <!-- VISTA 1: Lista detallada y editable -->
+      <div id="cart-view-list" class="comanda-view-panel active" role="tabpanel" aria-labelledby="tab-view-list">
+        <div class="cart-items-container" id="cart-items-container" role="region" aria-label="Platos seleccionados">
+          <!-- Inyectado por JS -->
         </div>
 
-        <div class="cart-actions-row">
-          <button type="button" id="btn-open-read-mode" class="btn-primary-action btn-read-mode">
-            🎙️ Dictar al Mesero
-          </button>
-          <button type="button" id="btn-share-order" class="btn-secondary-action">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <circle cx="18" cy="5" r="3"></circle>
-              <circle cx="6" cy="12" r="3"></circle>
-              <circle cx="18" cy="19" r="3"></circle>
-              <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
-              <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
-            </svg>
-            Compartir
-          </button>
+        <div class="cart-calculation-panel" id="cart-calculation-panel">
+          <div class="calc-row total-row">
+            <span>Total de tu selección:</span>
+            <strong id="calc-total">$0</strong>
+          </div>
+
+          <div class="cart-actions-row">
+            <button type="button" id="btn-switch-to-dictate" class="btn-primary-action btn-read-mode">
+              🎙️ Dictar al Mesero
+            </button>
+            <button type="button" id="btn-share-order" class="btn-secondary-action">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="18" cy="5" r="3"></circle>
+                <circle cx="6" cy="12" r="3"></circle>
+                <circle cx="18" cy="19" r="3"></circle>
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+              </svg>
+              Compartir
+            </button>
+          </div>
+
+          <div class="cart-subactions-row">
+            <button type="button" id="btn-clear-cart" class="btn-text-action">Desmarcar todos</button>
+            <button type="button" id="btn-order-taken" class="btn-text-action action-taken">✓ Ya tomaron mi pedido</button>
+          </div>
+
+          <p class="clarify-tax-note">
+            Precios oficiales en COP con impuestos incluidos · La propina es voluntaria y el pago se efectúa directamente en el restaurante al finalizar.
+          </p>
+        </div>
+      </div>
+
+      <!-- VISTA 2: Modo Dictado al Mesero (Texto grande, alto contraste, sin ruido) -->
+      <div id="cart-view-dictate" class="comanda-view-panel" role="tabpanel" aria-labelledby="tab-view-dictate" hidden>
+        <div class="waiter-read-container" id="waiter-read-container" role="region" aria-label="Lista de lectura para el mesero">
+          <!-- Inyectado dinámicamente con viñetas grandes -->
         </div>
 
-        <div class="cart-subactions-row">
-          <button type="button" id="btn-clear-cart" class="btn-text-action">Desmarcar todos</button>
-          <button type="button" id="btn-order-taken" class="btn-text-action action-taken">✓ Ya tomaron mi pedido</button>
+        <div class="waiter-read-footer">
+          <div class="read-total-badge" id="read-total-badge">Total selección: $0</div>
+          <button type="button" id="btn-confirm-order-taken" class="btn-primary-action" style="background-color: var(--tag-veg-text); width: 100%;">
+            ✓ Pedido tomado por el mesero
+          </button>
         </div>
       </div>
     </div>
   </dialog>
 
-  <!-- MODAL: MODO DICTADO RÁPIDO PARA EL MESERO -->
-  <dialog id="waiter-read-modal" class="app-dialog bottom-sheet-dialog" aria-labelledby="read-modal-title">
+  <!-- MODAL: AGREGAR NOTA AL PLATO PARA EL MESERO -->
+  <dialog id="item-note-dialog" class="app-dialog bottom-sheet-dialog" aria-labelledby="note-dialog-title">
     <div class="dialog-content">
       <div class="sheet-drag-handle" aria-hidden="true"></div>
       
       <div class="dialog-header">
         <div class="header-titles">
-          <h2 id="read-modal-title" class="dialog-title">🎙️ Modo Dictado al Mesero</h2>
-          <p class="dialog-subtitle">Lectura clara y ampliada para dictar o mostrar a la mesa</p>
+          <h2 id="note-dialog-title" class="dialog-title">📝 Indicación para el Mesero</h2>
+          <p id="note-dialog-dish-name" class="dialog-subtitle">Plato seleccionado</p>
         </div>
-        <button type="button" class="btn-close-dialog" id="btn-close-read" aria-label="Cerrar modo dictado">✕</button>
+        <button type="button" class="btn-close-dialog" id="btn-close-note-dialog" aria-label="Cerrar ventana de nota">✕</button>
       </div>
 
-      <div class="waiter-read-container" id="waiter-read-container" role="region" aria-label="Lista de lectura para el mesero">
-        <!-- Inyectado dinámicamente con viñetas grandes -->
-      </div>
+      <div class="note-dialog-body">
+        <p class="note-chips-label">Atajos comunes de cocina:</p>
+        <div class="note-chips-grid" id="note-quick-chips">
+          <button type="button" class="btn-quick-chip" data-note="Sin cebolla">Sin cebolla</button>
+          <button type="button" class="btn-quick-chip" data-note="Salsa aparte">Salsa aparte</button>
+          <button type="button" class="btn-quick-chip" data-note="Término 3/4">Término 3/4</button>
+          <button type="button" class="btn-quick-chip" data-note="Término medio">Término medio</button>
+          <button type="button" class="btn-quick-chip" data-note="Leche deslactosada">Leche deslactosada</button>
+          <button type="button" class="btn-quick-chip" data-note="Sin hielo">Sin hielo</button>
+          <button type="button" class="btn-quick-chip" data-note="Bien caliente">Bien caliente</button>
+          <button type="button" class="btn-quick-chip" data-note="Poco dulce">Poco dulce</button>
+        </div>
 
-      <div class="waiter-read-footer">
-        <div class="read-total-badge" id="read-total-badge">Total selección: $0</div>
-        <button type="button" id="btn-confirm-order-taken" class="btn-primary-action" style="background-color: var(--tag-veg-text); width: 100%;">
-          ✓ Pedido tomado por el mesero
-        </button>
+        <label for="custom-note-input" class="note-input-label">O escribe tu indicación personalizada:</label>
+        <input 
+          type="text" 
+          id="custom-note-input" 
+          class="custom-note-input" 
+          placeholder="Ej: Aderezo de albahaca aparte..."
+          maxlength="70"
+        />
+
+        <div class="note-dialog-actions">
+          <button type="button" id="btn-save-item-note" class="btn-primary-action">Guardar Indicación</button>
+          <button type="button" id="btn-cancel-item-note" class="btn-secondary-action">Cancelar</button>
+        </div>
       </div>
     </div>
   </dialog>
@@ -308,6 +379,14 @@
       </div>
     </div>
   </dialog>
+
+  <!-- Botón Flotante: Volver Arriba (/polish) -->
+  <button type="button" id="btn-scroll-top" class="btn-scroll-top" aria-label="Volver arriba en el menú" title="Volver arriba" hidden>
+    <span aria-hidden="true">↑</span>
+  </button>
+
+  <!-- Contenedor de Confeti y Celebración (/delight) -->
+  <div id="confetti-container" class="confetti-container" aria-hidden="true"></div>
 
   <!-- Toast Notification accesible para confirmaciones -->
   <div id="app-toast" class="app-toast" role="status" aria-live="polite" aria-atomic="true"></div>

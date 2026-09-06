@@ -140,6 +140,7 @@ export const MENU_DATA = [
             name: "Waffle D'Choclo",
             price: 16500,
             description: "Waffle de maíz relleno de queso, con queso 7 cueros y suero costeño.",
+            isSignature: true,
             tags: ["vegetariano"],
             image: "https://images.unsplash.com/photo-1562376552-0d160a2f238d?auto=format&fit=crop&w=700&q=80"
           }
@@ -323,6 +324,7 @@ export const MENU_DATA = [
             name: "Covarachía",
             price: 15900,
             description: "Sopa donde el tomate, el maíz y el plátano entran a jugar para resaltar el valor de los sabores de nuestra tierra, con aguacate, crema agria y cilantro.",
+            isSignature: true,
             tags: ["vegetariano", "picante"],
             image: "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=700&q=80"
           },
@@ -480,6 +482,7 @@ export const MENU_DATA = [
             price: 30900,
             description: "Carne desmechada, preparada con “hogao” sobre puré de plátano maduro, acompañada de crema agria, aguacate y un toque de pico de gallo.",
             featured: true,
+            isSignature: true,
             image: "https://images.unsplash.com/photo-1628294895950-9805252327bc?auto=format&fit=crop&w=700&q=80",
             tags: ["gluten-free-opt"]
           },
@@ -488,6 +491,7 @@ export const MENU_DATA = [
             name: "Cochinita Pibil",
             price: 29600,
             description: "Preparación mexicana de cerdo desmechado, acompañado de tonos cítricos y un toque de aguacate, lechuga, pico de gallo, cebolla encurtida y crema agria.",
+            isSignature: true,
             image: "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?auto=format&fit=crop&w=700&q=80",
             tags: ["picante", "gluten-free-opt"]
           },
@@ -825,6 +829,7 @@ export const MENU_DATA = [
             name: "Camarones",
             price: 45900,
             description: "Al Curry, al Ajillo o en Salsa de la Casa (Marco Polo).",
+            isSignature: true,
             image: "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=700&q=80",
             tags: ["mar"]
           }
@@ -1068,6 +1073,7 @@ export const MENU_DATA = [
             name: "Nutella®",
             price: 16900,
             description: "Crepe de Nutella® con crema chantilly.",
+            isSignature: true,
             image: "https://images.unsplash.com/photo-1519676867240-f03562e64548?auto=format&fit=crop&w=700&q=80",
             options: [
               { name: "Con Fresas", price: 17600 },
@@ -1234,6 +1240,7 @@ export const MENU_DATA = [
             name: "Copa Limeña",
             price: 16800,
             description: "Helado de Vainilla con salsa de arequipe, frutos del bosque, merengue, copos de guanábana y crema chantilly.",
+            isSignature: true,
             image: "https://images.unsplash.com/photo-1501443762994-82bd5dace89a?auto=format&fit=crop&w=700&q=80",
             tags: ["vegetariano"]
           },
