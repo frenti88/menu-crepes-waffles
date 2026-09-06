@@ -23,7 +23,7 @@ const server = http.createServer((req, res) => {
   if (reqPath === '/') reqPath = '/index.html';
 
   const safePath = path.normalize(reqPath).replace(/^(\.\.[\/\\])+/, '');
-  const filePath = path.join(__dirname, safePath);
+  const filePath = path.join(__dirname, '..', safePath);
   const ext = path.extname(filePath).toLowerCase();
   const contentType = MIME_TYPES[ext] || 'application/octet-stream';
 
