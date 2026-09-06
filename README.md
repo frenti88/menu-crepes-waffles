@@ -9,9 +9,7 @@ Menú digital para dispositivos móviles de **Crepes & Waffles**, optimizado par
 - **Navegación Sticky con Scroll-Spy**: Pestañas de categorías con auto-desplazamiento horizontal y sincronización visual al hacer scroll.
 - **Filtros Dietéticos Rápidos**: Filtrado instantáneo por `🌱 Vegetariano`, `🌿 Vegano`, `🌾🚫 Opción Sin Gluten`, `🌶️ Picante` y `🥜 Nueces/Maní`.
 - **Armador Interactivo de "Ensalada de la Barra"**: Personalizador táctil con los 24 ingredientes, 5 salsas y 5 complementos con validación de límites oficiales (máx. 12 ingredientes, 2 salsas, 3 complementos).
-- **Buscador en Vivo**: Búsqueda instantánea con resaltado de coincidencias en tiempo real.
-- **Mi Selección de Mesa / Calculadora**: Bottom sheet para registrar platos, calcular subtotales, estimar la propina sugerida (10%) y compartir la comanda con la mesa o por WhatsApp.
-- **Accesibilidad (a11y)**: Cumplimiento de contraste WCAG AAA/AA, targets táctiles mínimos de 44-48px, roles y estados ARIA, soporte para lectores de pantalla y soporte de movimiento reducido (`prefers-reduced-motion`).
+- **Catálogo Visual & Selección para el Mesero**: Presentación destacada de Título, Fotografía, Descripción y Precio de cada plato. Permite seleccionar platos con cantidades para comensales en la misma mesa, notas especiales (ej: *"Sin cebolla"*, *"Salsa aparte"*), compartir por WhatsApp y activar el **Modo Dictado al Mesero** con tipografía ampliada y numeración secuencial para dictar o mostrar fácilmente la orden al personal de servicio.
 
 ## 🛠️ Tecnologías
 

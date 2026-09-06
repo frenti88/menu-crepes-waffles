@@ -1,6 +1,7 @@
 /**
- * Crepes & Waffles · Menú Digital Mobile
- * Lógica de interacción, búsqueda en vivo, filtros, ensalada personalizada y selección de mesa
+ * Crepes & Waffles · Catálogo Digital Mobile
+ * Enfoque: Visualización clara de platos (Título, Fotografía, Descripción y Precio)
+ * Selección de platos "Para ordenar al mesero" cuando se acerque a la mesa
  */
 
 import { MENU_DATA, SALAD_BAR_CONFIG, DIETARY_TAGS, ALLERGEN_NOTICE } from '../data/menu-data.js';
@@ -10,7 +11,7 @@ const AppState = {
   activeCategory: MENU_DATA[0].id,
   activeFilter: 'todos',
   searchQuery: '',
-  cart: [],
+  selectedItems: [], // Platos marcados para dictar al mesero
   selectedSalad: {
     ingredients: new Set(),
     dressings: new Set(),
@@ -39,29 +40,46 @@ const showToast = (message) => {
   }, 2400);
 };
 
-// Cargar carrito desde LocalStorage
-const loadCartFromStorage = () => {
+// Cargar platos seleccionados desde LocalStorage
+const loadSelectedFromStorage = () => {
   try {
-    const saved = localStorage.getItem('cw_mesa_cart');
+    const saved = localStorage.getItem('cw_selected_dishes');
     if (saved) {
-      AppState.cart = JSON.parse(saved);
+      AppState.selectedItems = JSON.parse(saved).map(item => ({
+        ...item,
+        qty: item.qty || 1,
+        customNotes: item.customNotes || ''
+      }));
     }
   } catch (e) {
-    AppState.cart = [];
+    AppState.selectedItems = [];
   }
 };
 
-// Guardar carrito en LocalStorage
-const saveCartToStorage = () => {
+// Guardar platos seleccionados en LocalStorage
+const saveSelectedToStorage = () => {
   try {
-    localStorage.setItem('cw_mesa_cart', JSON.stringify(AppState.cart));
+    localStorage.setItem('cw_selected_dishes', JSON.stringify(AppState.selectedItems));
   } catch (e) {
     // Silencioso
   }
 };
 
+// Encontrar item por ID en la base de datos
+const findItemById = (itemId) => {
+  for (const cat of MENU_DATA) {
+    for (const sec of cat.sections) {
+      if (sec.items) {
+        const item = sec.items.find(i => i.id === itemId);
+        if (item) return { item, category: cat, section: sec };
+      }
+    }
+  }
+  return null;
+};
+
 // ==========================================================================
-// RENDERIZADO DEL MENÚ Y CATEGORÍAS
+// RENDERIZADO DEL CATÁLOGO Y CATEGORÍAS
 // ==========================================================================
 
 const renderCategoryTabs = () => {
@@ -192,18 +210,37 @@ const renderMenuSections = () => {
   attachItemEvents();
 };
 
+/**
+ * Renderizado de cada tarjeta del catálogo:
+ * Muestra Título, Fotografía (si la hay), Descripción y Precio de forma destacada
+ */
 const renderItemCard = (item, catId) => {
   const isCustomSalad = item.isCustomSalad;
+  const isSelected = AppState.selectedItems.some(i => i.id === item.id);
+
   return `
     <article 
-      class="menu-card" 
+      class="menu-card ${isSelected ? 'is-selected' : ''}" 
       id="card-${item.id}"
       data-tags="${(item.tags || []).join(' ')}"
       data-id="${item.id}"
       data-name="${item.name.toLowerCase()}"
       data-desc="${(item.description || '').toLowerCase()}"
     >
-      <div class="menu-card-main">
+      ${item.image ? `
+        <div class="menu-card-media-wrapper">
+          <img 
+            src="${item.image}" 
+            alt="${item.name}" 
+            class="menu-card-media" 
+            loading="lazy" 
+            decoding="async"
+            onerror="this.parentElement.style.display='none'"
+          />
+        </div>
+      ` : ''}
+
+      <div class="menu-card-body">
         <div class="menu-card-header">
           <h4 class="item-name">${item.name}</h4>
           <span class="item-price">${formatCOP(item.price)}</span>
@@ -233,32 +270,22 @@ const renderItemCard = (item, catId) => {
           ${isCustomSalad ? `
             <button 
               type="button" 
-              class="btn-add-item btn-open-salad" 
+              class="btn-select-toggle btn-open-salad" 
               aria-haspopup="dialog"
               data-id="${item.id}"
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <circle cx="12" cy="12" r="10"></circle>
-                <line x1="12" y1="8" x2="12" y2="16"></line>
-                <line x1="8" y1="12" x2="16" y2="12"></line>
-              </svg>
-              Armar Ensalada
+              🥗 Armar Ensalada para el Mesero
             </button>
           ` : `
             <button 
               type="button" 
-              class="btn-add-item btn-quick-add" 
+              class="btn-select-toggle ${isSelected ? 'selected' : ''}" 
               data-id="${item.id}"
-              data-name="${item.name}"
-              data-price="${item.price}"
-              aria-label="Agregar ${item.name} a mi selección"
+              aria-pressed="${isSelected ? 'true' : 'false'}"
+              aria-label="${isSelected ? 'Desmarcar ' + item.name : 'Marcar ' + item.name + ' para pedir al mesero'}"
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <circle cx="12" cy="12" r="10"></circle>
-                <line x1="12" y1="8" x2="12" y2="16"></line>
-                <line x1="8" y1="12" x2="16" y2="12"></line>
-              </svg>
-              Agregar a la mesa
+              <span class="toggle-icon">${isSelected ? '✓' : '＋'}</span>
+              <span class="toggle-label">${isSelected ? 'En mi lista para el mesero' : 'Marcar para pedir'}</span>
             </button>
           `}
 
@@ -268,22 +295,10 @@ const renderItemCard = (item, catId) => {
             data-id="${item.id}"
             aria-label="Ver detalles de ${item.name}"
           >
-            Detalles
+            Ver detalles
           </button>
         </div>
       </div>
-
-      ${item.image ? `
-        <div class="menu-card-aside">
-          <img 
-            src="${item.image}" 
-            alt="${item.name}" 
-            class="item-thumb" 
-            loading="lazy" 
-            decoding="async"
-          />
-        </div>
-      ` : ''}
     </article>
   `;
 };
@@ -378,6 +393,335 @@ const applyFilters = () => {
 };
 
 // ==========================================================================
+// SELECCIÓN DE PLATOS PARA EL MESERO (CATÁLOGO & COMANDA)
+// ==========================================================================
+const toggleSelectItem = (item) => {
+  const index = AppState.selectedItems.findIndex(i => i.id === item.id);
+  if (index >= 0) {
+    // Desmarcar plato
+    AppState.selectedItems.splice(index, 1);
+    showToast(`"${item.name}" desmarcado.`);
+  } else {
+    // Marcar plato
+    AppState.selectedItems.push({
+      id: item.id,
+      name: item.name,
+      price: item.price,
+      description: item.description || '',
+      image: item.image || null,
+      qty: 1,
+      customNotes: item.customNotes || ''
+    });
+    showToast(`"${item.name}" listo para dictar al mesero 📋`);
+  }
+
+  saveSelectedToStorage();
+  syncItemCardsSelection(item.id);
+  updateSelectedUI();
+};
+
+const updateItemQty = (index, delta) => {
+  if (!AppState.selectedItems[index]) return;
+  const item = AppState.selectedItems[index];
+  const newQty = (item.qty || 1) + delta;
+  if (newQty <= 0) {
+    removeSelectedItem(index);
+    return;
+  }
+  item.qty = newQty;
+  saveSelectedToStorage();
+  updateSelectedUI();
+  showToast(`${item.name}: ${newQty} ${newQty === 1 ? 'unidad' : 'unidades'}`);
+};
+
+const editItemNote = (index) => {
+  if (!AppState.selectedItems[index]) return;
+  const item = AppState.selectedItems[index];
+  const current = item.customNotes || '';
+  const note = prompt(`Nota especial para el mesero sobre "${item.name}":\n(Ej: Sin cebolla, Salsa aparte, Término 3/4, Leche deslactosada)`, current);
+  if (note !== null) {
+    item.customNotes = note.trim();
+    saveSelectedToStorage();
+    updateSelectedUI();
+    showToast(item.customNotes ? 'Nota guardada para el mesero ✍️' : 'Nota eliminada.');
+  }
+};
+
+const clearItemNote = (index) => {
+  if (!AppState.selectedItems[index]) return;
+  AppState.selectedItems[index].customNotes = '';
+  saveSelectedToStorage();
+  updateSelectedUI();
+  showToast('Nota eliminada.');
+};
+
+const removeSelectedItem = (index) => {
+  if (!AppState.selectedItems[index]) return;
+  const removed = AppState.selectedItems[index];
+  AppState.selectedItems.splice(index, 1);
+  saveSelectedToStorage();
+  syncItemCardsSelection(removed.id);
+  updateSelectedUI();
+  showToast(`"${removed.name}" eliminado de la lista.`);
+};
+
+const syncItemCardsSelection = (itemId) => {
+  const isSelected = AppState.selectedItems.some(i => i.id === itemId);
+  const cards = document.querySelectorAll(`.menu-card[data-id="${itemId}"]`);
+  cards.forEach(card => {
+    card.classList.toggle('is-selected', isSelected);
+    const toggleBtn = card.querySelector('.btn-select-toggle');
+    if (toggleBtn && !toggleBtn.classList.contains('btn-open-salad')) {
+      toggleBtn.classList.toggle('selected', isSelected);
+      toggleBtn.setAttribute('aria-pressed', isSelected ? 'true' : 'false');
+      const icon = toggleBtn.querySelector('.toggle-icon');
+      const label = toggleBtn.querySelector('.toggle-label');
+      if (icon) icon.textContent = isSelected ? '✓' : '＋';
+      if (label) label.textContent = isSelected ? 'En mi lista para el mesero' : 'Marcar para pedir';
+    }
+  });
+};
+
+const clearAllSelected = () => {
+  if (AppState.selectedItems.length === 0) return;
+  if (confirm('¿Deseas desmarcar todos los platos de tu lista para el mesero?')) {
+    const oldIds = AppState.selectedItems.map(i => i.id);
+    AppState.selectedItems = [];
+    saveSelectedToStorage();
+    oldIds.forEach(id => syncItemCardsSelection(id));
+    updateSelectedUI();
+    showToast('Lista de platos desmarcada.');
+  }
+};
+
+const markOrderAsCompleted = () => {
+  if (AppState.selectedItems.length === 0) return;
+  if (confirm('¿Confirmas que el mesero ya tomó tu orden? Se limpiará tu selección actual.')) {
+    const oldIds = AppState.selectedItems.map(i => i.id);
+    AppState.selectedItems = [];
+    saveSelectedToStorage();
+    oldIds.forEach(id => syncItemCardsSelection(id));
+    updateSelectedUI();
+    closeDialog('waiter-read-modal');
+    closeDialog('cart-modal');
+    showToast('¡Excelente! Tu pedido está en preparación en cocina 🥞✨');
+  }
+};
+
+const updateSelectedUI = () => {
+  const totalItemsCount = AppState.selectedItems.reduce((sum, i) => sum + (i.qty || 1), 0);
+  const totalAmount = AppState.selectedItems.reduce((sum, i) => sum + (i.price * (i.qty || 1)), 0);
+
+  // Badge en el header
+  const badge = document.getElementById('cart-badge');
+  if (badge) {
+    badge.textContent = totalItemsCount;
+    badge.style.transform = 'scale(1.25)';
+    setTimeout(() => { badge.style.transform = 'scale(1)'; }, 200);
+  }
+
+  // Barra flotante inferior
+  const floatBar = document.getElementById('floating-cart-bar');
+  const floatCount = document.getElementById('float-cart-count');
+  const floatTotal = document.getElementById('float-cart-total');
+
+  if (floatBar) {
+    if (totalItemsCount > 0) {
+      floatBar.classList.add('visible');
+      if (floatCount) floatCount.textContent = `${totalItemsCount} ${totalItemsCount === 1 ? 'plato' : 'platos'}`;
+      if (floatTotal) floatTotal.textContent = formatCOP(totalAmount);
+    } else {
+      floatBar.classList.remove('visible');
+    }
+  }
+
+  // Lista en el modal "Para Ordenar al Mesero"
+  renderSelectedModalItems();
+};
+
+const renderSelectedModalItems = () => {
+  const container = document.getElementById('cart-items-container');
+  if (!container) return;
+
+  if (AppState.selectedItems.length === 0) {
+    container.innerHTML = `
+      <div style="text-align: center; padding: 40px 16px; color: var(--cw-text-secondary);">
+        <p style="font-size: 1.15rem; font-family: var(--font-serif); margin-bottom: 8px;">No has marcado platos aún</p>
+        <p style="font-size: 0.88rem; line-height: 1.45;">Explora el catálogo y presiona <strong>"Marcar para pedir"</strong> para tener tus platos listos cuando el mesero se acerque a tu mesa.</p>
+      </div>
+    `;
+    const totalEl = document.getElementById('calc-total');
+    if (totalEl) totalEl.textContent = formatCOP(0);
+    return;
+  }
+
+  container.innerHTML = AppState.selectedItems.map((item, index) => {
+    const qty = item.qty || 1;
+    const subtotal = item.price * qty;
+
+    return `
+      <div class="cart-item-row">
+        ${item.image ? `
+          <img src="${item.image}" alt="${item.name}" class="cart-item-thumb" onerror="this.style.display='none'" />
+        ` : ''}
+        <div class="cart-item-meta">
+          <div class="cart-item-name">${item.name}</div>
+          <div class="cart-item-price">
+            ${formatCOP(subtotal)} ${qty > 1 ? `<span style="font-size: 0.78rem; font-weight: 500; color: var(--cw-text-secondary);">(${qty} × ${formatCOP(item.price)})</span>` : ''}
+          </div>
+          <div class="cart-item-note-row">
+            ${item.customNotes ? `
+              <span class="item-note-active">
+                <span>📝 ${item.customNotes}</span>
+                <button type="button" class="btn-clear-note" data-index="${index}" title="Quitar nota" aria-label="Quitar nota">✕</button>
+              </span>
+            ` : `
+              <button type="button" class="btn-item-note" data-index="${index}">
+                ＋ Nota especial
+              </button>
+            `}
+          </div>
+        </div>
+
+        <div class="cart-item-stepper">
+          <button type="button" class="btn-stepper btn-qty-minus" data-index="${index}" aria-label="Disminuir cantidad de ${item.name}">−</button>
+          <span class="stepper-qty">${qty}</span>
+          <button type="button" class="btn-stepper btn-qty-plus" data-index="${index}" aria-label="Aumentar cantidad de ${item.name}">+</button>
+        </div>
+
+        <button 
+          type="button" 
+          class="btn-remove-selected" 
+          data-index="${index}" 
+          aria-label="Quitar ${item.name} de la lista"
+          title="Quitar de mi lista"
+        >
+          ✕
+        </button>
+      </div>
+    `;
+  }).join('');
+
+  // Eventos de stepper y notas
+  container.querySelectorAll('.btn-qty-minus').forEach(btn => {
+    btn.addEventListener('click', () => updateItemQty(parseInt(btn.dataset.index), -1));
+  });
+
+  container.querySelectorAll('.btn-qty-plus').forEach(btn => {
+    btn.addEventListener('click', () => updateItemQty(parseInt(btn.dataset.index), 1));
+  });
+
+  container.querySelectorAll('.btn-item-note').forEach(btn => {
+    btn.addEventListener('click', () => editItemNote(parseInt(btn.dataset.index)));
+  });
+
+  container.querySelectorAll('.btn-clear-note').forEach(btn => {
+    btn.addEventListener('click', () => clearItemNote(parseInt(btn.dataset.index)));
+  });
+
+  container.querySelectorAll('.btn-remove-selected').forEach(btn => {
+    btn.addEventListener('click', () => removeSelectedItem(parseInt(btn.dataset.index)));
+  });
+
+  const totalAmount = AppState.selectedItems.reduce((sum, i) => sum + (i.price * (i.qty || 1)), 0);
+  const totalEl = document.getElementById('calc-total');
+  if (totalEl) totalEl.textContent = formatCOP(totalAmount);
+};
+
+// ==========================================================================
+// MODO DICTADO RÁPIDO PARA EL MESERO
+// ==========================================================================
+const openWaiterReadMode = () => {
+  if (AppState.selectedItems.length === 0) {
+    showToast('No has marcado platos para dictar al mesero.');
+    return;
+  }
+  renderWaiterReadMode();
+  closeDialog('cart-modal');
+  openDialog('waiter-read-modal');
+};
+
+const renderWaiterReadMode = () => {
+  const container = document.getElementById('waiter-read-container');
+  const badge = document.getElementById('read-total-badge');
+  if (!container) return;
+
+  let totalAmount = 0;
+  let totalItemsCount = 0;
+
+  container.innerHTML = AppState.selectedItems.map((item, index) => {
+    const qty = item.qty || 1;
+    const subtotal = item.price * qty;
+    totalAmount += subtotal;
+    totalItemsCount += qty;
+
+    return `
+      <div class="read-item-card">
+        <div class="read-item-badge">${index + 1}</div>
+        <div class="read-item-info">
+          <div class="read-item-title-row">
+            <span class="read-item-name">
+              <span class="read-item-qty">${qty}x</span> ${item.name}
+            </span>
+            <span class="read-item-price">${formatCOP(subtotal)}</span>
+          </div>
+          ${item.customNotes ? `
+            <div class="read-item-notes">
+              <strong>Indicación para cocina:</strong> ${item.customNotes}
+            </div>
+          ` : ''}
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  if (badge) {
+    badge.textContent = `Total comanda (${totalItemsCount} ${totalItemsCount === 1 ? 'plato' : 'platos'}): ${formatCOP(totalAmount)}`;
+  }
+};
+
+// ==========================================================================
+// COMPARTIR LISTA CON LA MESA
+// ==========================================================================
+const initShareOrder = () => {
+  const btnShare = document.getElementById('btn-share-order');
+  if (!btnShare) return;
+
+  btnShare.addEventListener('click', () => {
+    if (AppState.selectedItems.length === 0) {
+      showToast('Marca platos en tu lista primero.');
+      return;
+    }
+
+    const total = AppState.selectedItems.reduce((sum, i) => sum + (i.price * (i.qty || 1)), 0);
+
+    let text = `🥞 *Para pedir al Mesero · Crepes & Waffles* 🥞\n\n`;
+    AppState.selectedItems.forEach((item, index) => {
+      const qty = item.qty || 1;
+      const subtotal = item.price * qty;
+      text += `${index + 1}. *${qty}x ${item.name}* (${formatCOP(subtotal)})\n`;
+      if (item.customNotes) {
+        text += `   📝 _${item.customNotes}_\n`;
+      }
+    });
+    text += `\n*Total de la comanda:* ${formatCOP(total)}\n\n_Listo para dictar al mesero_ ☕`;
+
+    if (navigator.share) {
+      navigator.share({
+        title: 'Platos para pedir en Crepes & Waffles',
+        text: text
+      }).catch(() => {});
+    } else {
+      navigator.clipboard.writeText(text).then(() => {
+        showToast('¡Lista copiada al portapapeles para compartir!');
+      }).catch(() => {
+        alert(text);
+      });
+    }
+  });
+};
+
+// ==========================================================================
 // MODAL Y ARMADOR DE "ENSALADA DE LA BARRA"
 // ==========================================================================
 const initSaladBuilder = () => {
@@ -416,7 +760,7 @@ const initSaladBuilder = () => {
     input.addEventListener('change', handleSaladOptionChange);
   });
 
-  // Botón para agregar ensalada personalizada
+  // Botón para guardar ensalada personalizada
   const btnAddCustom = document.getElementById('btn-add-custom-salad');
   if (btnAddCustom) {
     btnAddCustom.addEventListener('click', () => {
@@ -438,15 +782,16 @@ const initSaladBuilder = () => {
       if (drList) customDetails.push(`Salsas: ${drList}`);
       if (cmpList) customDetails.push(`Complementos: ${cmpList}`);
 
-      addToCart({
+      toggleSelectItem({
         id: `ens-barra-custom-${Date.now()}`,
         name: 'Ensalada de la Barra (Personalizada)',
         price: SALAD_BAR_CONFIG.price,
+        description: 'Ensalada personalizada para dictar a la mesera.',
         customNotes: customDetails.join(' | ')
       });
 
       closeDialog('salad-modal');
-      showToast('Ensalada de la Barra agregada a tu mesa.');
+      showToast('Ensalada personalizada guardada para el mesero.');
     });
   }
 
@@ -506,181 +851,6 @@ const updateSaladCounters = () => {
     cmpCounter.textContent = `${cmpSize} / ${SALAD_BAR_CONFIG.maxComplements} seleccionados`;
     cmpCounter.classList.toggle('limit-reached', cmpSize === SALAD_BAR_CONFIG.maxComplements);
   }
-};
-
-// ==========================================================================
-// SELECCIÓN DE MESA / CALCULADORA (CARRITO)
-// ==========================================================================
-const addToCart = (item) => {
-  const existing = AppState.cart.find(i => i.id === item.id && i.customNotes === item.customNotes);
-  if (existing) {
-    existing.qty += 1;
-  } else {
-    AppState.cart.push({
-      id: item.id,
-      name: item.name,
-      price: item.price,
-      customNotes: item.customNotes || '',
-      qty: 1
-    });
-  }
-  saveCartToStorage();
-  updateCartUI();
-  showToast(`"${item.name}" agregado a tu mesa`);
-};
-
-const updateCartItemQty = (index, delta) => {
-  if (!AppState.cart[index]) return;
-  AppState.cart[index].qty += delta;
-  if (AppState.cart[index].qty <= 0) {
-    AppState.cart.splice(index, 1);
-  }
-  saveCartToStorage();
-  updateCartUI();
-};
-
-const clearCart = () => {
-  if (AppState.cart.length === 0) return;
-  if (confirm('¿Deseas vaciar toda tu selección para la mesa?')) {
-    AppState.cart = [];
-    saveCartToStorage();
-    updateCartUI();
-    showToast('Selección vaciada.');
-  }
-};
-
-const updateCartUI = () => {
-  const totalItems = AppState.cart.reduce((sum, i) => sum + i.qty, 0);
-  const subtotal = AppState.cart.reduce((sum, i) => sum + (i.price * i.qty), 0);
-
-  // Badges en header
-  const badge = document.getElementById('cart-badge');
-  if (badge) {
-    badge.textContent = totalItems;
-    badge.style.transform = 'scale(1.25)';
-    setTimeout(() => { badge.style.transform = 'scale(1)'; }, 200);
-  }
-
-  // Barra flotante inferior
-  const floatBar = document.getElementById('floating-cart-bar');
-  const floatCount = document.getElementById('float-cart-count');
-  const floatTotal = document.getElementById('float-cart-total');
-
-  if (floatBar) {
-    if (totalItems > 0) {
-      floatBar.classList.add('visible');
-      if (floatCount) floatCount.textContent = `${totalItems} ${totalItems === 1 ? 'plato' : 'platos'}`;
-      if (floatTotal) floatTotal.textContent = formatCOP(subtotal);
-    } else {
-      floatBar.classList.remove('visible');
-    }
-  }
-
-  // Lista en el modal de carrito
-  renderCartModalItems();
-};
-
-const renderCartModalItems = () => {
-  const container = document.getElementById('cart-items-container');
-  if (!container) return;
-
-  if (AppState.cart.length === 0) {
-    container.innerHTML = `
-      <div style="text-align: center; padding: 40px 16px; color: var(--cw-text-secondary);">
-        <p style="font-size: 1.1rem; font-family: var(--font-serif); margin-bottom: 8px;">Aún no has agregado platos</p>
-        <p style="font-size: 0.85rem;">Explora el menú y presiona "+ Agregar a la mesa" en tus platos favoritos.</p>
-      </div>
-    `;
-    updateCartCalculations(0);
-    return;
-  }
-
-  container.innerHTML = AppState.cart.map((item, index) => `
-    <div class="cart-item-row">
-      <div class="cart-item-meta">
-        <div class="cart-item-name">${item.name}</div>
-        <div class="cart-item-sub">${formatCOP(item.price)} c/u ${item.customNotes ? ` · <small>${item.customNotes}</small>` : ''}</div>
-      </div>
-      <div class="cart-item-controls">
-        <button type="button" class="cart-qty-btn btn-qty-minus" data-index="${index}" aria-label="Disminuir cantidad de ${item.name}">-</button>
-        <span class="cart-qty-val" aria-live="polite">${item.qty}</span>
-        <button type="button" class="cart-qty-btn btn-qty-plus" data-index="${index}" aria-label="Aumentar cantidad de ${item.name}">+</button>
-      </div>
-    </div>
-  `).join('');
-
-  container.querySelectorAll('.btn-qty-minus').forEach(btn => {
-    btn.addEventListener('click', () => updateCartItemQty(parseInt(btn.dataset.index), -1));
-  });
-
-  container.querySelectorAll('.btn-qty-plus').forEach(btn => {
-    btn.addEventListener('click', () => updateCartItemQty(parseInt(btn.dataset.index), 1));
-  });
-
-  const subtotal = AppState.cart.reduce((sum, i) => sum + (i.price * i.qty), 0);
-  updateCartCalculations(subtotal);
-};
-
-const updateCartCalculations = (subtotal) => {
-  const subtotalEl = document.getElementById('calc-subtotal');
-  const tipEl = document.getElementById('calc-tip');
-  const totalEl = document.getElementById('calc-total');
-  const tipToggle = document.getElementById('tip-toggle');
-
-  const includeTip = tipToggle ? tipToggle.checked : true;
-  const tipAmount = includeTip ? Math.round(subtotal * 0.10) : 0;
-  const totalAmount = subtotal + tipAmount;
-
-  if (subtotalEl) subtotalEl.textContent = formatCOP(subtotal);
-  if (tipEl) tipEl.textContent = formatCOP(tipAmount);
-  if (totalEl) totalEl.textContent = formatCOP(totalAmount);
-};
-
-// ==========================================================================
-// COMPARTIR PEDIDO CON LA MESA
-// ==========================================================================
-const initShareOrder = () => {
-  const btnShare = document.getElementById('btn-share-order');
-  if (!btnShare) return;
-
-  btnShare.addEventListener('click', () => {
-    if (AppState.cart.length === 0) {
-      showToast('Agrega platos a tu selección primero.');
-      return;
-    }
-
-    const subtotal = AppState.cart.reduce((sum, i) => sum + (i.price * i.qty), 0);
-    const tipToggle = document.getElementById('tip-toggle');
-    const includeTip = tipToggle ? tipToggle.checked : true;
-    const tip = includeTip ? Math.round(subtotal * 0.10) : 0;
-    const total = subtotal + tip;
-
-    let text = `🥞 *Mi Selección Crepes & Waffles* 🥞\n\n`;
-    AppState.cart.forEach(item => {
-      text += `• ${item.qty}x ${item.name} (${formatCOP(item.price * item.qty)})\n`;
-      if (item.customNotes) {
-        text += `   _${item.customNotes}_\n`;
-      }
-    });
-    text += `\n*Subtotal:* ${formatCOP(subtotal)}`;
-    if (includeTip) {
-      text += `\n*Propina sugerida (10%):* ${formatCOP(tip)}`;
-    }
-    text += `\n*Total aproximado:* ${formatCOP(total)}\n\n_Listo para ordenar a la mesera_ ☕`;
-
-    if (navigator.share) {
-      navigator.share({
-        title: 'Mi Selección Crepes & Waffles',
-        text: text
-      }).catch(() => {});
-    } else {
-      navigator.clipboard.writeText(text).then(() => {
-        showToast('¡Pedido copiado al portapapeles para compartir!');
-      }).catch(() => {
-        alert(text);
-      });
-    }
-  });
 };
 
 // ==========================================================================
@@ -769,39 +939,46 @@ const initSearch = () => {
         return;
       }
 
-      resultsContainer.innerHTML = matched.map(item => `
-        <div class="menu-card" style="margin-bottom: 6px;">
-          <div class="menu-card-main">
-            <div class="menu-card-header">
-              <h4 class="item-name">${highlightMatch(item.name, query)}</h4>
-              <span class="item-price">${formatCOP(item.price)}</span>
-            </div>
-            <p style="font-size: 0.75rem; color: var(--cw-gold); font-weight: 600; margin-bottom: 4px;">
-              ${item.categoryName} › ${item.sectionName}
-            </p>
-            <p class="item-desc">${highlightMatch(item.description || '', query)}</p>
-            <div class="menu-card-actions">
-              <button 
-                type="button" 
-                class="btn-add-item btn-search-add" 
-                data-id="${item.id}"
-                data-name="${item.name}"
-                data-price="${item.price}"
-              >
-                + Agregar a la mesa
-              </button>
+      resultsContainer.innerHTML = matched.map(item => {
+        const isSelected = AppState.selectedItems.some(i => i.id === item.id);
+        return `
+          <div class="menu-card ${isSelected ? 'is-selected' : ''}" style="margin-bottom: 8px;">
+            ${item.image ? `
+              <div class="menu-card-media-wrapper" style="height: 140px;">
+                <img src="${item.image}" alt="${item.name}" class="menu-card-media" loading="lazy" />
+              </div>
+            ` : ''}
+            <div class="menu-card-body">
+              <div class="menu-card-header">
+                <h4 class="item-name">${highlightMatch(item.name, query)}</h4>
+                <span class="item-price">${formatCOP(item.price)}</span>
+              </div>
+              <p style="font-size: 0.75rem; color: var(--cw-gold); font-weight: 600; margin-bottom: 4px;">
+                ${item.categoryName} › ${item.sectionName}
+              </p>
+              <p class="item-desc">${highlightMatch(item.description || '', query)}</p>
+              <div class="menu-card-actions">
+                <button 
+                  type="button" 
+                  class="btn-select-toggle btn-search-toggle ${isSelected ? 'selected' : ''}" 
+                  data-id="${item.id}"
+                >
+                  <span class="toggle-icon">${isSelected ? '✓' : '＋'}</span>
+                  <span class="toggle-label">${isSelected ? 'En mi lista para el mesero' : 'Marcar para pedir'}</span>
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      `).join('');
+        `;
+      }).join('');
 
-      resultsContainer.querySelectorAll('.btn-search-add').forEach(btn => {
+      resultsContainer.querySelectorAll('.btn-search-toggle').forEach(btn => {
         btn.addEventListener('click', () => {
-          addToCart({
-            id: btn.dataset.id,
-            name: btn.dataset.name,
-            price: parseInt(btn.dataset.price)
-          });
+          const itemData = findItemById(btn.dataset.id);
+          if (itemData) {
+            toggleSelectItem(itemData.item);
+            executeSearch(query); // Re-renderizar resultados de búsqueda
+          }
         });
       });
     }
@@ -822,29 +999,14 @@ const escapeRegex = (string) => {
 // MODAL DE DETALLE DE PLATO
 // ==========================================================================
 const openItemDetail = (itemId) => {
-  let foundItem = null;
-  let foundCat = null;
-  let foundSec = null;
-
-  for (const cat of MENU_DATA) {
-    for (const sec of cat.sections) {
-      if (sec.items) {
-        const it = sec.items.find(i => i.id === itemId);
-        if (it) {
-          foundItem = it;
-          foundCat = cat;
-          foundSec = sec;
-          break;
-        }
-      }
-    }
-    if (foundItem) break;
-  }
-
-  if (!foundItem) return;
+  const result = findItemById(itemId);
+  if (!result) return;
+  const { item: foundItem, category: foundCat, section: foundSec } = result;
 
   const detailBody = document.getElementById('detail-modal-body');
   if (!detailBody) return;
+
+  const isSelected = AppState.selectedItems.some(i => i.id === foundItem.id);
 
   detailBody.innerHTML = `
     ${foundItem.image ? `
@@ -895,21 +1057,17 @@ const openItemDetail = (itemId) => {
     <div style="display: flex; gap: 10px;">
       <button 
         type="button" 
-        id="btn-add-from-detail" 
+        id="btn-toggle-from-detail" 
         class="btn-primary-action"
-        style="width: 100%;"
+        style="width: 100%; ${isSelected ? 'background-color: var(--tag-veg-text);' : ''}"
       >
-        Agregar a Mi Mesa (${formatCOP(foundItem.price)})
+        ${isSelected ? '✓ Quitar de mi lista para el mesero' : '＋ Marcar para pedir al mesero (' + formatCOP(foundItem.price) + ')'}
       </button>
     </div>
   `;
 
-  document.getElementById('btn-add-from-detail').addEventListener('click', () => {
-    addToCart({
-      id: foundItem.id,
-      name: foundItem.name,
-      price: foundItem.price
-    });
+  document.getElementById('btn-toggle-from-detail').addEventListener('click', () => {
+    toggleSelectItem(foundItem);
     closeDialog('item-detail-modal');
   });
 
@@ -939,27 +1097,25 @@ const closeDialog = (dialogId) => {
 // ASIGNACIÓN DE EVENTOS A LOS ITEMS RENDERIZADOS
 // ==========================================================================
 const attachItemEvents = () => {
-  // Botones "+ Agregar a la mesa"
-  document.querySelectorAll('.btn-quick-add').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      addToCart({
-        id: btn.dataset.id,
-        name: btn.dataset.name,
-        price: parseInt(btn.dataset.price)
+  // Botones "Marcar para pedir / Seleccionado"
+  document.querySelectorAll('.btn-select-toggle').forEach(btn => {
+    if (btn.classList.contains('btn-open-salad')) {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openDialog('salad-modal');
       });
-    });
+    } else {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const itemData = findItemById(btn.dataset.id);
+        if (itemData) {
+          toggleSelectItem(itemData.item);
+        }
+      });
+    }
   });
 
-  // Botón abrir ensalada personalizada
-  document.querySelectorAll('.btn-open-salad').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      openDialog('salad-modal');
-    });
-  });
-
-  // Botón "Detalles"
+  // Botón "Ver detalles"
   document.querySelectorAll('.btn-detail-item').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -972,7 +1128,7 @@ const attachItemEvents = () => {
 // INICIALIZACIÓN DE LA APLICACIÓN
 // ==========================================================================
 document.addEventListener('DOMContentLoaded', () => {
-  loadCartFromStorage();
+  loadSelectedFromStorage();
   renderCategoryTabs();
   renderMenuSections();
   initScrollSpy();
@@ -980,25 +1136,28 @@ document.addEventListener('DOMContentLoaded', () => {
   initSaladBuilder();
   initSearch();
   initShareOrder();
-  updateCartUI();
+  updateSelectedUI();
 
-  // Apertura del modal de selección desde header o barra flotante
+  // Apertura del modal "Para Ordenar al Mesero" desde header o barra flotante
   const btnOpenCart = document.getElementById('btn-open-cart');
   const btnFloatingCart = document.getElementById('btn-floating-cart');
   const btnCloseCart = document.getElementById('btn-close-cart');
   const btnClearCart = document.getElementById('btn-clear-cart');
-  const tipToggle = document.getElementById('tip-toggle');
+  const btnOpenReadMode = document.getElementById('btn-open-read-mode');
+  const btnCloseRead = document.getElementById('btn-close-read');
+  const btnOrderTaken = document.getElementById('btn-order-taken');
+  const btnConfirmOrderTaken = document.getElementById('btn-confirm-order-taken');
 
   if (btnOpenCart) btnOpenCart.addEventListener('click', () => openDialog('cart-modal'));
   if (btnFloatingCart) btnFloatingCart.addEventListener('click', () => openDialog('cart-modal'));
   if (btnCloseCart) btnCloseCart.addEventListener('click', () => closeDialog('cart-modal'));
-  if (btnClearCart) btnClearCart.addEventListener('click', clearCart);
-  if (tipToggle) {
-    tipToggle.addEventListener('change', () => {
-      const subtotal = AppState.cart.reduce((sum, i) => sum + (i.price * i.qty), 0);
-      updateCartCalculations(subtotal);
-    });
-  }
+  if (btnClearCart) btnClearCart.addEventListener('click', clearAllSelected);
+
+  // Modo dictado al mesero y confirmación de pedido tomado
+  if (btnOpenReadMode) btnOpenReadMode.addEventListener('click', openWaiterReadMode);
+  if (btnCloseRead) btnCloseRead.addEventListener('click', () => closeDialog('waiter-read-modal'));
+  if (btnOrderTaken) btnOrderTaken.addEventListener('click', markOrderAsCompleted);
+  if (btnConfirmOrderTaken) btnConfirmOrderTaken.addEventListener('click', markOrderAsCompleted);
 
   // Cierre de dialogs al hacer click en el backdrop
   document.querySelectorAll('.app-dialog').forEach(dialog => {

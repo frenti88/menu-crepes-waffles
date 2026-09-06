@@ -107,6 +107,7 @@ export const MENU_DATA = [
             name: "Bretonne",
             price: 25900,
             description: "Típica crepe francesa de lomo ahumado de cerdo, queso y huevo.",
+            image: "https://images.unsplash.com/photo-1519676867240-f03562e64548?auto=format&fit=crop&w=700&q=80",
             tags: ["gluten-free-opt"]
           },
           {
@@ -128,6 +129,7 @@ export const MENU_DATA = [
             price: 11200,
             description: "Waffle dorado tradicional servido con mantequilla y a tu elección de syrup o miel pura de abejas.",
             tags: ["vegetariano"],
+            image: "https://images.unsplash.com/photo-1598214886806-c87b84b7078b?auto=format&fit=crop&w=700&q=80",
             options: [
               { name: "Con Huevo Frito y Tocineta", price: 18400 },
               { name: "Con Huevo Frito y Salchichas", price: 18400 }
@@ -138,7 +140,8 @@ export const MENU_DATA = [
             name: "Waffle D'Choclo",
             price: 16500,
             description: "Waffle de maíz relleno de queso, con queso 7 cueros y suero costeño.",
-            tags: ["vegetariano"]
+            tags: ["vegetariano"],
+            image: "https://images.unsplash.com/photo-1562376552-0d160a2f238d?auto=format&fit=crop&w=700&q=80"
           }
         ]
       },
@@ -359,6 +362,7 @@ export const MENU_DATA = [
             name: "Jamón y Queso",
             price: 19900,
             description: "Clásica crepe rellena de jamón seleccionado y queso fundido.",
+            image: "https://images.unsplash.com/photo-1628294895950-9805252327bc?auto=format&fit=crop&w=700&q=80",
             options: [
               { name: "Con Champiñones", price: 23900 }
             ],
@@ -384,6 +388,7 @@ export const MENU_DATA = [
             name: "Sensación Colombia",
             price: 28900,
             description: "Carne desmechada, queso, huevo, crema agria y nuestro tradicional “hogao\".",
+            image: "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?auto=format&fit=crop&w=700&q=80",
             tags: ["gluten-free-opt"]
           }
         ]
@@ -397,6 +402,7 @@ export const MENU_DATA = [
             name: "Champiñones al Ajillo",
             price: 22900,
             description: "Crepe de champiñones en salsa al ajillo con queso.",
+            image: "https://images.unsplash.com/photo-1588137378633-dea1336ce1e2?auto=format&fit=crop&w=700&q=80",
             tags: ["vegetariano", "gluten-free-opt"]
           },
           {
@@ -427,6 +433,7 @@ export const MENU_DATA = [
             name: "Poblana",
             price: 25900,
             description: "Aguacate, queso, pico de gallo, salsa agria, lechuga y un delicioso toque mexicano de ají.",
+            image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=700&q=80",
             tags: ["vegetariano", "picante", "gluten-free-opt"]
           },
           {
@@ -473,6 +480,7 @@ export const MENU_DATA = [
             price: 30900,
             description: "Carne desmechada, preparada con “hogao” sobre puré de plátano maduro, acompañada de crema agria, aguacate y un toque de pico de gallo.",
             featured: true,
+            image: "https://images.unsplash.com/photo-1628294895950-9805252327bc?auto=format&fit=crop&w=700&q=80",
             tags: ["gluten-free-opt"]
           },
           {
@@ -480,6 +488,7 @@ export const MENU_DATA = [
             name: "Cochinita Pibil",
             price: 29600,
             description: "Preparación mexicana de cerdo desmechado, acompañado de tonos cítricos y un toque de aguacate, lechuga, pico de gallo, cebolla encurtida y crema agria.",
+            image: "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?auto=format&fit=crop&w=700&q=80",
             tags: ["picante", "gluten-free-opt"]
           },
           {
@@ -563,6 +572,7 @@ export const MENU_DATA = [
             name: "Pollo Rosarito",
             price: 32800,
             description: "Pollo en salsa mexicana con chipotle, arcos de aguacate y frijol rojo cuarentano. *Frijol de temporada, origen Montes de María.",
+            image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=700&q=80",
             tags: ["picante", "gluten-free-opt"]
           },
           {
@@ -640,6 +650,7 @@ export const MENU_DATA = [
             price: 42500,
             description: "Pulpo, camarones, calamares y langostinos sobre quinua negra, bañados en salsa de coco y toques de coco crujiente.",
             featured: true,
+            image: "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=700&q=80",
             tags: ["mar", "gluten-free-opt"]
           },
           {
@@ -654,6 +665,7 @@ export const MENU_DATA = [
             name: "Salmon Roll",
             price: 42500,
             description: "Rollitos de salmón ahumado con rúgula, queso crema, mostaza, cebolla, aguacate y crujientes vegetales frescos. Acompañados de ensalada verde.",
+            image: "https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?auto=format&fit=crop&w=700&q=80",
             tags: ["mar", "gluten-free-opt"]
           }
         ]
@@ -676,6 +688,7 @@ export const MENU_DATA = [
             name: "Pollo Árabe",
             price: 28900,
             description: "Pechuga de pollo al horno, lechuga, tahini, trocitos de aceitunas y cebollas encurtidas.",
+            image: "https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?auto=format&fit=crop&w=700&q=80",
             tags: []
           },
           {
@@ -719,6 +732,7 @@ export const MENU_DATA = [
             name: "Capresa",
             price: 27900,
             description: "Pan árabe relleno de mozzarellina, tomates frescos y secos, rúgula y pesto.",
+            image: "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=700&q=80",
             tags: ["vegetariano", "nueces"]
           },
           {
@@ -764,6 +778,7 @@ export const MENU_DATA = [
             name: "Pollo y Champiñones",
             price: 34900,
             description: "Pechuga de pollo con champiñones en salsa suave.",
+            image: "https://images.unsplash.com/photo-1509722747041-616f39b57569?auto=format&fit=crop&w=700&q=80",
             options: [
               { name: "Con Queso", price: 35900 }
             ],
@@ -788,6 +803,7 @@ export const MENU_DATA = [
             name: "Lomito Pimienta",
             price: 44900,
             description: "Julianas de lomo y pimienta del Putumayo en su salsa.",
+            image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=700&q=80",
             tags: ["picante"]
           },
           {
@@ -809,6 +825,7 @@ export const MENU_DATA = [
             name: "Camarones",
             price: 45900,
             description: "Al Curry, al Ajillo o en Salsa de la Casa (Marco Polo).",
+            image: "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=700&q=80",
             tags: ["mar"]
           }
         ]
@@ -831,6 +848,7 @@ export const MENU_DATA = [
             name: "Cesar con Pollo",
             price: 29500,
             description: "La clásica ensalada con crutones, tomates cherry y queso parmesano. Acompañada con pan centeno.",
+            image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=700&q=80",
             tags: []
           },
           {
@@ -845,6 +863,7 @@ export const MENU_DATA = [
             name: "Florentina",
             price: 35500,
             description: "Mozzarellina, variedad de lechugas frescas, albahaca fresca, tomates secos, frescos y cherry, champiñones, pesto, aguacate, aceitunas negras y vinagre balsámico.",
+            image: "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=700&q=80",
             tags: ["vegetariano", "nueces"]
           },
           {
@@ -859,6 +878,7 @@ export const MENU_DATA = [
             name: "Mediterránea",
             price: 42900,
             description: "Camarones, calamares, pesto, variedad de lechugas frescas, apio, champiñones, cebolla roja, aceitunas negras, vinagreta balsámica y cebollas crocantes.",
+            image: "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=700&q=80",
             tags: ["mar", "nueces"]
           },
           {
@@ -913,7 +933,14 @@ export const MENU_DATA = [
         items: [
           { id: "beb-j-mora", name: "Mora", price: 7900, description: "Jugo de fruta 100% natural.", tags: ["vegano", "vegetariano"] },
           { id: "beb-j-mango", name: "Mango", price: 8200, description: "Jugo de fruta 100% natural.", tags: ["vegano", "vegetariano"] },
-          { id: "beb-j-mandarina", name: "Mandarina", price: 10200, description: "Jugo natural recién exprimido.", tags: ["vegano", "vegetariano"] },
+          { 
+            id: "beb-j-mandarina", 
+            name: "Mandarina", 
+            price: 10200, 
+            description: "Jugo natural recién exprimido.", 
+            image: "https://images.unsplash.com/photo-1613478223719-2ab802602423?auto=format&fit=crop&w=700&q=80",
+            tags: ["vegano", "vegetariano"] 
+          },
           { id: "beb-j-fresa", name: "Fresa", price: 8300, description: "Jugo de fruta 100% natural.", tags: ["vegano", "vegetariano"] },
           { id: "beb-j-guanabana", name: "Guanábana (en leche)", price: 8500, description: "Jugo natural en leche.", tags: ["vegetariano"] },
           { id: "beb-j-feijoa", name: "Feijoa", price: 7900, description: "Jugo de fruta 100% natural.", tags: ["vegano", "vegetariano"] },
@@ -929,7 +956,14 @@ export const MENU_DATA = [
           { id: "beb-lim-mandarino", name: "Limonada Limón Mandarino", price: 7900, description: "Refrescante combinación cítrica de limón mandarino.", tags: ["vegano", "vegetariano"] },
           { id: "beb-lim-hierbabuena", name: "Limonada de Hierbabuena", price: 8300, description: "Con hojas frescas de hierbabuena maceradas.", tags: ["vegano", "vegetariano"] },
           { id: "beb-lim-mangobiche", name: "Limonada de Mango Biche", price: 9600, description: "El toque perfecto entre acidez fresca y mango verde.", tags: ["vegano", "vegetariano"] },
-          { id: "beb-lim-coco", name: "Limonada de Coco", price: 11600, description: "Cremosa limonada batida con leche de coco natural.", tags: ["vegetariano"] }
+          { 
+            id: "beb-lim-coco", 
+            name: "Limonada de Coco", 
+            price: 11600, 
+            description: "Cremosa limonada batida con leche de coco natural.", 
+            image: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=700&q=80",
+            tags: ["vegetariano"] 
+          }
         ]
       },
       {
@@ -948,6 +982,7 @@ export const MENU_DATA = [
             name: "Alegría",
             price: 11200,
             description: "Mezcla de frutas del campo: mango, maracuyá y piña.",
+            image: "https://images.unsplash.com/photo-1553530666-ba11a7da3888?auto=format&fit=crop&w=700&q=80",
             tags: ["vegano", "vegetariano"]
           },
           {
@@ -1033,6 +1068,7 @@ export const MENU_DATA = [
             name: "Nutella®",
             price: 16900,
             description: "Crepe de Nutella® con crema chantilly.",
+            image: "https://images.unsplash.com/photo-1519676867240-f03562e64548?auto=format&fit=crop&w=700&q=80",
             options: [
               { name: "Con Fresas", price: 17600 },
               { name: "Con Banano", price: 17600 }
@@ -1044,6 +1080,7 @@ export const MENU_DATA = [
             name: "Chocolate Fondue",
             price: 14800,
             description: "Crepe con fresas y banano, helado de Vainilla, crema chantilly y chocolate.",
+            image: "https://images.unsplash.com/photo-1579954115545-a95591f28bfc?auto=format&fit=crop&w=700&q=80",
             tags: ["vegetariano"]
           },
           {
@@ -1127,6 +1164,7 @@ export const MENU_DATA = [
             name: "Nutella® y Banano",
             price: 17900,
             description: "Tajadas de banano fresco, helado Old Style y crema chantilly.",
+            image: "https://images.unsplash.com/photo-1598214886806-c87b84b7078b?auto=format&fit=crop&w=700&q=80",
             tags: ["vegetariano", "nueces"]
           },
           {
@@ -1134,6 +1172,7 @@ export const MENU_DATA = [
             name: "Frutos del Bosque",
             price: 15600,
             description: "Con helado de Vainilla y crema chantilly.",
+            image: "https://images.unsplash.com/photo-1562376552-0d160a2f238d?auto=format&fit=crop&w=700&q=80",
             tags: ["vegetariano"]
           }
         ]
@@ -1195,6 +1234,7 @@ export const MENU_DATA = [
             name: "Copa Limeña",
             price: 16800,
             description: "Helado de Vainilla con salsa de arequipe, frutos del bosque, merengue, copos de guanábana y crema chantilly.",
+            image: "https://images.unsplash.com/photo-1501443762994-82bd5dace89a?auto=format&fit=crop&w=700&q=80",
             tags: ["vegetariano"]
           },
           {
@@ -1202,6 +1242,7 @@ export const MENU_DATA = [
             name: "Banana Split",
             price: 17500,
             description: "Helado de Mora, Fresa, Vainilla, tajadas de banano fresco, crema chantilly, barquillo y salsa de mora y chocolate.",
+            image: "https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=700&q=80",
             tags: ["vegetariano", "nueces"]
           },
           {
@@ -1223,6 +1264,7 @@ export const MENU_DATA = [
             name: "Tiramisú",
             price: 14900,
             description: "Nuestra recreación italiana de helado Old Style, bizcochuelo bañado con coñac, entonado con salsas inglesas, chocolate y de café.",
+            image: "https://images.unsplash.com/photo-1579954115545-a95591f28bfc?auto=format&fit=crop&w=700&q=80",
             tags: ["vegetariano"]
           },
           {

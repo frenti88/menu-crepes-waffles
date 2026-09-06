@@ -37,11 +37,10 @@
           <span class="btn-text-sr">Buscar</span>
         </button>
 
-        <button id="btn-open-cart" class="cart-trigger-btn" aria-label="Ver mi selección de mesa" aria-haspopup="dialog">
+        <button id="btn-open-cart" class="cart-trigger-btn" aria-label="Ver platos seleccionados para el mesero" aria-haspopup="dialog">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
-            <line x1="3" y1="6" x2="21" y2="6"></line>
-            <path d="M16 10a4 4 0 0 1-8 0"></path>
+            <path d="M9 11l3 3L22 4"></path>
+            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
           </svg>
           <span class="cart-badge" id="cart-badge" aria-live="polite">0</span>
         </button>
@@ -126,16 +125,16 @@
     </div>
   </footer>
 
-  <!-- Barra Flotante Inferior de "Mi Selección de Mesa" -->
-  <div class="floating-cart-bar" id="floating-cart-bar" role="complementary" aria-label="Resumen rápido de mesa">
+  <!-- Barra Flotante Inferior de "Para Pedir al Mesero" -->
+  <div class="floating-cart-bar" id="floating-cart-bar" role="complementary" aria-label="Platos seleccionados para ordenar">
     <button class="floating-cart-btn" id="btn-floating-cart" aria-haspopup="dialog">
       <div class="cart-info">
         <span class="cart-count-pill" id="float-cart-count">0 platos</span>
-        <span class="cart-title-text">Mi Selección para la Mesa</span>
+        <span class="cart-title-text">Para pedir al mesero</span>
       </div>
       <div class="cart-total-action">
         <span class="cart-total-amount" id="float-cart-total">$0</span>
-        <span class="cart-arrow" aria-hidden="true">Ver →</span>
+        <span class="cart-arrow" aria-hidden="true">Ver lista →</span>
       </div>
     </button>
   </div>
@@ -168,43 +167,34 @@
     </div>
   </dialog>
 
-  <!-- MODAL / BOTTOM SHEET: Mi Selección de Mesa / Calculadora -->
+  <!-- MODAL / BOTTOM SHEET: Para Ordenar al Mesero -->
   <dialog id="cart-modal" class="app-dialog bottom-sheet-dialog" aria-labelledby="cart-modal-title">
     <div class="dialog-content">
       <div class="sheet-drag-handle" aria-hidden="true"></div>
       
       <div class="dialog-header">
         <div class="header-titles">
-          <h2 id="cart-modal-title" class="dialog-title">Mi Selección de Mesa</h2>
-          <p class="dialog-subtitle">Anota lo que vas a pedir para tenerlo listo al ordenar a la mesera</p>
+          <h2 id="cart-modal-title" class="dialog-title">📋 Para Ordenar al Mesero</h2>
+          <p class="dialog-subtitle">Díctale o muéstrale esta lista a tu mesero cuando tome tu orden</p>
         </div>
-        <button type="button" class="btn-close-dialog" id="btn-close-cart" aria-label="Cerrar selección">✕</button>
+        <button type="button" class="btn-close-dialog" id="btn-close-cart" aria-label="Cerrar lista">✕</button>
       </div>
 
-      <div class="cart-items-container" id="cart-items-container" role="region" aria-label="Platos en mi selección">
+      <div class="cart-items-container" id="cart-items-container" role="region" aria-label="Platos seleccionados">
         <!-- Inyectado por JS -->
       </div>
 
       <div class="cart-calculation-panel" id="cart-calculation-panel">
-        <div class="calc-row">
-          <span>Subtotal estimado:</span>
-          <span id="calc-subtotal">$0</span>
-        </div>
-        <div class="calc-row tip-row">
-          <label for="tip-toggle" class="tip-label">
-            <input type="checkbox" id="tip-toggle" checked>
-            <span>Incluir propina sugerida (10%)</span>
-          </label>
-          <span id="calc-tip">$0</span>
-        </div>
         <div class="calc-row total-row">
-          <span>Total aproximado:</span>
+          <span>Total de tu selección:</span>
           <strong id="calc-total">$0</strong>
         </div>
 
         <div class="cart-actions-row">
-          <button type="button" id="btn-clear-cart" class="btn-secondary-action">Vaciar selección</button>
-          <button type="button" id="btn-share-order" class="btn-primary-action">
+          <button type="button" id="btn-open-read-mode" class="btn-primary-action btn-read-mode">
+            🎙️ Dictar al Mesero
+          </button>
+          <button type="button" id="btn-share-order" class="btn-secondary-action">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <circle cx="18" cy="5" r="3"></circle>
               <circle cx="6" cy="12" r="3"></circle>
@@ -212,9 +202,40 @@
               <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
               <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
             </svg>
-            Compartir con la mesa
+            Compartir
           </button>
         </div>
+
+        <div class="cart-subactions-row">
+          <button type="button" id="btn-clear-cart" class="btn-text-action">Desmarcar todos</button>
+          <button type="button" id="btn-order-taken" class="btn-text-action action-taken">✓ Ya tomaron mi pedido</button>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- MODAL: MODO DICTADO RÁPIDO PARA EL MESERO -->
+  <dialog id="waiter-read-modal" class="app-dialog bottom-sheet-dialog" aria-labelledby="read-modal-title">
+    <div class="dialog-content">
+      <div class="sheet-drag-handle" aria-hidden="true"></div>
+      
+      <div class="dialog-header">
+        <div class="header-titles">
+          <h2 id="read-modal-title" class="dialog-title">🎙️ Modo Dictado al Mesero</h2>
+          <p class="dialog-subtitle">Lectura clara y ampliada para dictar o mostrar a la mesa</p>
+        </div>
+        <button type="button" class="btn-close-dialog" id="btn-close-read" aria-label="Cerrar modo dictado">✕</button>
+      </div>
+
+      <div class="waiter-read-container" id="waiter-read-container" role="region" aria-label="Lista de lectura para el mesero">
+        <!-- Inyectado dinámicamente con viñetas grandes -->
+      </div>
+
+      <div class="waiter-read-footer">
+        <div class="read-total-badge" id="read-total-badge">Total selección: $0</div>
+        <button type="button" id="btn-confirm-order-taken" class="btn-primary-action" style="background-color: var(--tag-veg-text); width: 100%;">
+          ✓ Pedido tomado por el mesero
+        </button>
       </div>
     </div>
   </dialog>
@@ -266,7 +287,7 @@
 
       <div class="salad-footer-action">
         <button type="button" id="btn-add-custom-salad" class="btn-primary-action">
-          Agregar Ensalada Personalizada a Mi Mesa ($18.900)
+          Guardar Ensalada para el Mesero ($18.900)
         </button>
       </div>
     </div>
