@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#221610">
+  <meta name="description" content="Menú digital oficial de Crepes & Waffles optimizado para dispositivos móviles. Consulta desayunos, crepes de sal y dulce, waffles, ensaladas, helados artesanales y más.">
+  <title>Crepes & Waffles · Menú Digital</title>
+
+  <!-- Google Fonts preconnect & stylesheet -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Enlace accesible de salto -->
+  <a href="#main-menu-content" class="skip-link">Saltar al contenido del menú</a>
+
+  <!-- Header Superior Fijo -->
+  <header class="site-header" id="site-header" role="banner">
+    <div class="header-main-bar">
+      <div class="brand-container">
+        <a href="#" class="brand-logo" aria-label="Crepes and Waffles Inicio">
+          <span class="brand-name">CREPES & WAFFLES</span>
+          <span class="brand-tagline">AMOR HECHO ALIMENTO</span>
+        </a>
+      </div>
+
+      <div class="header-actions">
+        <button id="btn-toggle-search" class="icon-button" aria-label="Abrir buscador del menú" aria-expanded="false" aria-controls="search-drawer">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <span class="btn-text-sr">Buscar</span>
+        </button>
+
+        <button id="btn-open-cart" class="cart-trigger-btn" aria-label="Ver mi selección de mesa" aria-haspopup="dialog">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <path d="M16 10a4 4 0 0 1-8 0"></path>
+          </svg>
+          <span class="cart-badge" id="cart-badge" aria-live="polite">0</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Navegación deslizante de Categorías -->
+    <nav class="category-nav-wrapper" aria-label="Categorías del menú">
+      <ul class="category-nav-list" id="category-nav-list" role="tablist">
+        <!-- Renderizado dinámicamente con app.js -->
+      </ul>
+    </nav>
+
+    <!-- Filtros Dietéticos Rápidos -->
+    <section class="dietary-filters-bar" aria-label="Filtros dietéticos">
+      <div class="filters-scroll" id="filters-scroll">
+        <button class="filter-chip active" data-filter="todos" aria-pressed="true">
+          <span>Todos</span>
+        </button>
+        <button class="filter-chip" data-filter="vegetariano" aria-pressed="false">
+          <span aria-hidden="true">🌱</span> Vegetariano
+        </button>
+        <button class="filter-chip" data-filter="vegano" aria-pressed="false">
+          <span aria-hidden="true">🌿</span> Vegano
+        </button>
+        <button class="filter-chip" data-filter="gluten-free-opt" aria-pressed="false">
+          <span aria-hidden="true">🌾🚫</span> Opción Sin Gluten
+        </button>
+        <button class="filter-chip" data-filter="picante" aria-pressed="false">
+          <span aria-hidden="true">🌶️</span> Ligeramente Picante
+        </button>
+        <button class="filter-chip" data-filter="nueces" aria-pressed="false">
+          <span aria-hidden="true">🥜</span> Con Nueces/Maní
+        </button>
+      </div>
+    </section>
+  </header>
+
+  <!-- Barra informativa de masa y alérgenos -->
+  <aside class="top-info-banner" aria-label="Avisos importantes">
+    <div class="info-content">
+      <span class="info-icon" aria-hidden="true">✨</span>
+      <p class="info-text">Ahora puedes pedir tus crepes en <strong>masa vegana y sin gluten</strong>.</p>
+    </div>
+  </aside>
+
+  <!-- Contenido Principal del Menú -->
+  <main class="main-content" id="main-menu-content">
+    <!-- Contenedor dinámico donde se inyectan las categorías y secciones -->
+    <div id="menu-sections-container" class="menu-sections-container">
+      <!-- Inyectado por JavaScript -->
+    </div>
+  </main>
+
+  <!-- Footer con información institucional y alérgenos oficial -->
+  <footer class="site-footer" role="contentinfo">
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <h3>CREPES & WAFFLES</h3>
+        <p class="footer-slogan">Amor hecho alimento · Arte-Sano</p>
+      </div>
+
+      <div class="allergen-box" role="region" aria-labelledby="allergen-title">
+        <h4 id="allergen-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          Información sobre alérgenos
+        </h4>
+        <p>
+          Si tienes alguna alergia alimentaria, restricción y/o intolerancia, te pedimos informárselo a nuestro equipo de servicio, haremos todo lo posible para atender tu solicitud. Ten en cuenta que en nuestras cocinas preparamos productos que contienen trigo, huevos, frutos secos, maní, soya, leche, pescados y mariscos y que no todos los platos tienen en su descripción la totalidad de los ingredientes.
+        </p>
+      </div>
+
+      <div class="footer-contact">
+        <p><strong>Línea nacional de domicilios:</strong> <a href="tel:6016767610">601 676 7610</a></p>
+        <p><strong>Tienda online:</strong> <a href="https://domicilios.crepesywaffles.com" target="_blank" rel="noopener noreferrer">domicilios.crepesywaffles.com</a></p>
+        <p class="disclaimer-text">Precios en Pesos Colombianos (COP). Imágenes de carácter ilustrativo, la presentación puede variar dependiendo el restaurante. Sujeto a disponibilidad y/o hasta agotar existencias.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Barra Flotante Inferior de "Mi Selección de Mesa" -->
+  <div class="floating-cart-bar" id="floating-cart-bar" role="complementary" aria-label="Resumen rápido de mesa">
+    <button class="floating-cart-btn" id="btn-floating-cart" aria-haspopup="dialog">
+      <div class="cart-info">
+        <span class="cart-count-pill" id="float-cart-count">0 platos</span>
+        <span class="cart-title-text">Mi Selección para la Mesa</span>
+      </div>
+      <div class="cart-total-action">
+        <span class="cart-total-amount" id="float-cart-total">$0</span>
+        <span class="cart-arrow" aria-hidden="true">Ver →</span>
+      </div>
+    </button>
+  </div>
+
+  <!-- MODAL / DRAWER: Buscador en Vivo -->
+  <dialog id="search-modal" class="app-dialog search-dialog" aria-labelledby="search-modal-title">
+    <div class="dialog-content">
+      <div class="dialog-header">
+        <h2 id="search-modal-title" class="dialog-title">Buscar en el Menú</h2>
+        <button type="button" class="btn-close-dialog" id="btn-close-search" aria-label="Cerrar buscador">✕</button>
+      </div>
+      <div class="search-input-wrapper">
+        <label for="menu-search-input" class="visually-hidden">Ingresa el plato o ingrediente</label>
+        <input 
+          type="search" 
+          id="menu-search-input" 
+          class="menu-search-input" 
+          placeholder="Ej: Sombrero vueltiao, Nutella, al curry, sin gluten..."
+          autocomplete="off"
+          autofocus
+        >
+        <button type="button" id="btn-clear-search" class="btn-clear-search" aria-label="Limpiar campo de búsqueda" hidden>✕</button>
+      </div>
+
+      <div class="search-stats" id="search-stats" aria-live="polite"></div>
+
+      <div class="search-results-list" id="search-results-list" role="region" aria-label="Resultados de búsqueda">
+        <p class="search-placeholder-text">Empieza a escribir para encontrar tus platos favoritos al instante.</p>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- MODAL / BOTTOM SHEET: Mi Selección de Mesa / Calculadora -->
+  <dialog id="cart-modal" class="app-dialog bottom-sheet-dialog" aria-labelledby="cart-modal-title">
+    <div class="dialog-content">
+      <div class="sheet-drag-handle" aria-hidden="true"></div>
+      
+      <div class="dialog-header">
+        <div class="header-titles">
+          <h2 id="cart-modal-title" class="dialog-title">Mi Selección de Mesa</h2>
+          <p class="dialog-subtitle">Anota lo que vas a pedir para tenerlo listo al ordenar a la mesera</p>
+        </div>
+        <button type="button" class="btn-close-dialog" id="btn-close-cart" aria-label="Cerrar selección">✕</button>
+      </div>
+
+      <div class="cart-items-container" id="cart-items-container" role="region" aria-label="Platos en mi selección">
+        <!-- Inyectado por JS -->
+      </div>
+
+      <div class="cart-calculation-panel" id="cart-calculation-panel">
+        <div class="calc-row">
+          <span>Subtotal estimado:</span>
+          <span id="calc-subtotal">$0</span>
+        </div>
+        <div class="calc-row tip-row">
+          <label for="tip-toggle" class="tip-label">
+            <input type="checkbox" id="tip-toggle" checked>
+            <span>Incluir propina sugerida (10%)</span>
+          </label>
+          <span id="calc-tip">$0</span>
+        </div>
+        <div class="calc-row total-row">
+          <span>Total aproximado:</span>
+          <strong id="calc-total">$0</strong>
+        </div>
+
+        <div class="cart-actions-row">
+          <button type="button" id="btn-clear-cart" class="btn-secondary-action">Vaciar selección</button>
+          <button type="button" id="btn-share-order" class="btn-primary-action">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="18" cy="5" r="3"></circle>
+              <circle cx="6" cy="12" r="3"></circle>
+              <circle cx="18" cy="19" r="3"></circle>
+              <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+              <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+            </svg>
+            Compartir con la mesa
+          </button>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- MODAL INTERACTIVO: Ensalada de la Barra -->
+  <dialog id="salad-modal" class="app-dialog bottom-sheet-dialog salad-dialog" aria-labelledby="salad-modal-title">
+    <div class="dialog-content">
+      <div class="sheet-drag-handle" aria-hidden="true"></div>
+
+      <div class="dialog-header">
+        <div class="header-titles">
+          <h2 id="salad-modal-title" class="dialog-title">Arma tu Ensalada de la Barra</h2>
+          <p class="dialog-subtitle">Porque nadie conoce la mezcla mejor que tú · $18.900</p>
+        </div>
+        <button type="button" class="btn-close-dialog" id="btn-close-salad" aria-label="Cerrar armador de ensalada">✕</button>
+      </div>
+
+      <div class="salad-builder-body" id="salad-builder-body">
+        <!-- Grupo 1: Ingredientes (Hasta 12) -->
+        <fieldset class="salad-group">
+          <legend class="group-legend">
+            <span>1. Elige tus ingredientes</span>
+            <span class="group-counter" id="ingredients-counter">0 / 12 seleccionados</span>
+          </legend>
+          <p class="group-instruction">Puedes seleccionar un máximo de 12 ingredientes frescos:</p>
+          <div class="checkbox-chips-grid" id="ingredients-grid"></div>
+        </fieldset>
+
+        <!-- Grupo 2: Salsas (Hasta 2) -->
+        <fieldset class="salad-group">
+          <legend class="group-legend">
+            <span>2. Elige tus salsas</span>
+            <span class="group-counter" id="dressings-counter">0 / 2 seleccionadas</span>
+          </legend>
+          <p class="group-instruction">Puedes seleccionar un máximo de 2 salsas artesanales:</p>
+          <div class="checkbox-chips-grid" id="dressings-grid"></div>
+        </fieldset>
+
+        <!-- Grupo 3: Complementos (Hasta 3) -->
+        <fieldset class="salad-group">
+          <legend class="group-legend">
+            <span>3. Elige tus complementos</span>
+            <span class="group-counter" id="complements-counter">0 / 3 seleccionados</span>
+          </legend>
+          <p class="group-instruction">Puedes seleccionar un máximo de 3 complementos crocantes:</p>
+          <div class="checkbox-chips-grid" id="complements-grid"></div>
+        </fieldset>
+      </div>
+
+      <div class="salad-footer-action">
+        <button type="button" id="btn-add-custom-salad" class="btn-primary-action">
+          Agregar Ensalada Personalizada a Mi Mesa ($18.900)
+        </button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- MODAL: Detalle de Plato -->
+  <dialog id="item-detail-modal" class="app-dialog bottom-sheet-dialog detail-dialog" aria-labelledby="detail-modal-title">
+    <div class="dialog-content">
+      <div class="sheet-drag-handle" aria-hidden="true"></div>
+
+      <div class="dialog-header">
+        <h2 id="detail-modal-title" class="dialog-title">Detalle del Plato</h2>
+        <button type="button" class="btn-close-dialog" id="btn-close-detail" aria-label="Cerrar detalle">✕</button>
+      </div>
+
+      <div class="detail-body" id="detail-modal-body">
+        <!-- Inyectado por JS -->
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Toast Notification accesible para confirmaciones -->
+  <div id="app-toast" class="app-toast" role="status" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- Scripts -->
+  <script type="module" src="app.js"></script>
+</body>
+</html>

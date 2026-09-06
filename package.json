@@ -1,0 +1,19 @@
+{
+  "name": "menu-crepes-waffles",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Menú digital mobile de Crepes & Waffles optimizado para accesibilidad y usabilidad móvil.",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [
+    "crepes-and-waffles",
+    "digital-menu",
+    "accessibility",
+    "mobile-first",
+    "a11y"
+  ],
+  "author": "Fredy Arroyave",
+  "license": "MIT"
+}
